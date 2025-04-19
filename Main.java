@@ -1,47 +1,37 @@
-class NumberPrinter extends Thread {
-    private String threadName;
+package org.example.demo1;
 
-    public NumberPrinter(String name) {
-        this.threadName = name;
-    }
-
-    @Override
-    public void run() {
-        printNumbers();
-    }
-
-    // Méthode synchronisée pour éviter le mélange des sorties
-    private synchronized void printNumbers() {
-        for (int i = 1; i < 5; i++) {
-            System.out.println(threadName + ":" + i);
-            try {
-                Thread.sleep(500); // Petite pause pour simuler le travail et voir la concurrence
-            } catch (InterruptedException e) {
-                System.out.println(threadName + " a été interrompu.");
-            }
-        }
-    }
-}
-
+import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
-        // Créer deux threads avec des noms différents
-        NumberPrinter thread1 = new NumberPrinter("Thread-A");
-        NumberPrinter thread2 = new NumberPrinter("Thread-B");
-
-        // Démarrer les threads
-        thread1.start();
-        try {
-            thread1.join(); // Attendre que thread1 termine avant de démarrer thread2
-        } catch (InterruptedException e) {
-            System.out.println("ERRRRRRRR");
-        }
-
-        thread2.start(); // Démarrer thread2 après la fin de thread1
-        try {
-            thread2.join(); // Attendre que thread2 termine avant de terminer main
-        } catch (InterruptedException e) {
-            System.out.println("Main a été interrompu.");
-        }
+        Scanner scanner = new Scanner(System.in); int choix;
+        do {
+            System.out.println("\n--- Menu ---");
+            System.out.println("1. Afficher les étudiants");
+            System.out.println("2. Ajouter un étudiant");
+            System.out.println("3. Supprimer un étudiant");
+            System.out.println("4. Quitter");
+            System.out.print("Votre choix :");
+            choix = scanner.nextInt(); scanner.nextLine();
+            switch (choix) {
+                case 1:
+                    EtudiantDAO.afficherEtudiants(); break;
+                case 2:
+                    System.out.print("Nom :"); String nom = scanner.nextLine();
+                    System.out.print("Prénom :"); String prenom = scanner.nextLine();
+                    System.out.print("Âge :"); int age = scanner.nextInt();
+                    scanner.nextLine();
+                    EtudiantDAO.ajouterEtudiant(nom, prenom, age); break;
+                case 3:
+                    System.out.print("ID de l'étudiant à supprimer :");
+                    int id = scanner.nextInt();
+                    scanner.nextLine();
+                    EtudiantDAO.supprimerEtudiant(id); break;
+                case 4:
+                    System.out.println("Fin du programme."); break;
+                default:
+                    System.out.println("Choix invalide.");
+            }
+        } while (choix != 4);
+        scanner.close();
     }
 }
